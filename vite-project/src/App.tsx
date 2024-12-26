@@ -14,6 +14,7 @@ import DashboardNav from "./components/DashboardNav";
 import ReferFriendPage from "./pages/Refer";
 import MarketDashboard from "./pages/Market";
 import ProfilePage from "./pages/Profile";
+import AdminDashboard from "./pages/Admin/AdminPages";
 
 function App() {
   return (
@@ -32,6 +33,8 @@ function App() {
           <Route path="Refer-friend" element={<ReferFriendPage />} />
           <Route path="market" element={<MarketDashboard />} />
           <Route path="profile" element={<ProfilePage />} />
+          <Route path="admin" element={<AdminDashboard />} />
+          
         </Routes>
       </Router>
     </>

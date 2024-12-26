@@ -1,4 +1,4 @@
-import { Product } from "../types/data-types";
+import { Product } from "../hooks/data-types";
 
 
 

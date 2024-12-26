@@ -1,38 +1,26 @@
-// hooks/useTheme.ts
-import { useState, useEffect } from "react";
+import { Sun, Moon } from 'lucide-react';
+import { useTheme } from '../hooks/useTheme';
 
-export const useTheme = () => {
-  const [isDark, setIsDark] = useState(false);
+interface ThemeToggleProps {
+  className?: string;
+}
 
-  useEffect(() => {
-    const isDarkMode = localStorage.getItem("darkMode") === "true";
-    setIsDark(isDarkMode);
-    document.documentElement.classList.toggle("dark", isDarkMode);
-  }, []);
-
-  const toggleTheme = () => {
-    const newMode = !isDark;
-    setIsDark(newMode);
-    localStorage.setItem("darkMode", String(newMode));
-    document.documentElement.classList.toggle("dark");
-  };
-
-  return { isDark, toggleTheme };
-};
-
-// components/ThemeToggle.tsx
-import { Sun, Moon } from "lucide-react";
-// import { useTheme } from "../hooks/useTheme";
-
-export const ThemeToggle = () => {
+export const ThemeToggle = ({ className = '' }: ThemeToggleProps) => {
   const { isDark, toggleTheme } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+      className={`p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+        isDark ? 'text-gray-300' : 'text-gray-600'
+      } ${className}`}
+      aria-label="Toggle theme"
     >
-      {isDark ? <Sun size={20} /> : <Moon size={20} />}
+      {isDark ? (
+        <Sun className="w-5 h-5" />
+      ) : (
+        <Moon className="w-5 h-5" />
+      )}
     </button>
   );
 };
