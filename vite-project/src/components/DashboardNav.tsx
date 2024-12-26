@@ -11,6 +11,7 @@ import {
   //   SwapHorizontal,
 } from "lucide-react";
 import { MdSwapHorizontalCircle } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 const DashboardNav = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -18,15 +19,15 @@ const DashboardNav = () => {
   const [isProfileOpen, setProfileOpen] = useState(false);
 
   const menuItems = [
-    { title: "Home", icon: "home" },
-    { title: "My Accounts", icon: "user" },
-    { title: "Funding", icon: "dollar" },
-    { title: "Copy Trading", icon: "copy" },
-    { title: "Competitions", icon: "trophy" },
-    { title: "Refer A Friend", icon: "users" },
-    { title: "Market Intelligence", icon: "chart" },
-    { title: "XM Live", icon: "video" },
-    { title: "More", icon: "more" },
+    { title: "Home", path: "/", icon: "home" },
+    { title: "My Accounts", path: "/account", icon: "user" },
+    { title: "Funding", path: "/funding", icon: "dollar" },
+    { title: "Copy Trading", path: "trade", icon: "copy" },
+    { title: "Competitions", path: "", icon: "trophy" },
+    { title: "Refer A Friend", path: "", icon: "users" },
+    { title: "Market Intelligence", path: "", icon: "chart" },
+    { title: "XM Live", path: "", icon: "video" },
+    { title: "More", path: "", icon: "more" },
   ];
 
   return (
@@ -34,29 +35,31 @@ const DashboardNav = () => {
       {/* Main Navbar */}
       <nav className="bg-white shadow-md px-6 h-20 flex items-center justify-between fixed top-0 w-full z-50">
         {/* Left Section */}
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center justify-center space-x-2">
           <button
             onClick={() => setSidebarOpen(true)}
             className="p-2 hover:bg-gray-100 rounded-lg"
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-6 w-6 font-semibold" />
           </button>
 
-          <img src="/logo.png" alt="Logo" className="h-10" />
+          <img src="/logo.png" alt="Logo" className="h-10 w-10" />
 
-          <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-2">
-            <span className="text-sm text-gray-500">Balance:</span>
-            <span className="font-semibold text-base">
+          <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-2 ">
+            <span className="text-xl text-gray-500 hidden lg:block">
+              Balance:
+            </span>
+            <span className="font-semibold text-bas text-xl">
               {isAccountReal ? "$2,500.00" : "$10,000.00"}
             </span>
             <button
               onClick={() => setAccountReal(!isAccountReal)}
-              className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
+              className="flex items-center space-x-1 text-sm text-green-300 hover:text-blue-700"
             >
-              <span className="font-semibold">
+              <span className="font-semibold text-xl hidden md:block  pl-4">
                 {isAccountReal ? "Real" : "Demo"}
               </span>
-              <MdSwapHorizontalCircle className="h-4 w-4" />
+              <MdSwapHorizontalCircle className="h-6 w-8" />
             </button>
           </div>
         </div>
@@ -168,13 +171,13 @@ const DashboardNav = () => {
           {/* Sidebar Content */}
           <div className="py-4">
             {menuItems.map((item, index) => (
-              <a
+              <Link
                 key={index}
-                href="#"
+                to={item.path}
                 className="flex items-center px-6 py-3 hover:bg-gray-100 transition-colors font-semibold"
               >
                 <span>{item.title}</span>
-              </a>
+              </Link>
             ))}
 
             {/* Mobile-only buttons */}
