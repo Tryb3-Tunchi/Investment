@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { MdSwapHorizontalCircle } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { ThemeToggle } from "./themeToggle";
 
 const DashboardNav = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -78,6 +79,8 @@ const DashboardNav = () => {
             <Wallet className="h-4 w-4 mr-2" />
             Connect Wallet
           </button>
+
+          <ThemeToggle />
 
           <div className="relative">
             <button
@@ -163,6 +166,9 @@ const DashboardNav = () => {
           {/* Sidebar Header */}
           <div className="p-4 border-b flex justify-between items-center">
             <h2 className="font-bold text-lg">Menu</h2>
+            <div className="md:hidden">
+              <ThemeToggle />
+            </div>
             <button
               onClick={() => setSidebarOpen(false)}
               className="p-2 hover:bg-gray-100 rounded-lg"
