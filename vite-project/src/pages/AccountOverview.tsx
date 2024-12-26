@@ -50,12 +50,11 @@ const AccountOverview = () => {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
 
-      <div className=" my-16 font-semibold text-center">
+      <div className=" my-16 font-semibold text-center border-b-4 pb-10 hidden:">
         <p className="text-2xl font-bold py-4">
           Verify your account now to start trading
         </p>
         <Link to="/verify">
-          {" "}
           <button
             onClick={() => Navigate("verify")}
             className="px-6  py-2 bg-blue-600 text-white rounded-lg font-semibold"

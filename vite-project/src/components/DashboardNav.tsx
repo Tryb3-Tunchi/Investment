@@ -25,7 +25,7 @@ const DashboardNav = () => {
     { title: "Copy Trading", path: "/trade", icon: "copy" },
     // { title: "Competitions", path: "/p", icon: "trophy" },
     { title: "Refer A Friend", path: "/Refer-friend", icon: "users" },
-    { title: "Market Intelligence", path: "", icon: "chart" },
+    { title: "Market Intelligence", path: "/market", icon: "chart" },
     // { title: "XM Live", path: "", icon: "video" },
     { title: "More", path: "", icon: "more" },
   ];
@@ -90,20 +90,20 @@ const DashboardNav = () => {
             {isProfileOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
                 <a
-                  href="#"
+                  href="/profile"
                   className="block px-4 py-2 hover:bg-gray-100 font-semibold"
                 >
                   Profile
                 </a>
                 <a
-                  href="#"
+                  href="/settings"
                   className="block px-4 py-2 hover:bg-gray-100 font-semibold"
                 >
                   Settings
                 </a>
                 <hr className="my-2" />
                 <a
-                  href="#"
+                  href="signin"
                   className="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold"
                 >
                   Sign Out
@@ -124,20 +124,20 @@ const DashboardNav = () => {
           {isProfileOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
               <a
-                href="#"
+                href="/profile"
                 className="block px-4 py-2 hover:bg-gray-100 font-semibold"
               >
                 Profile
               </a>
               <a
-                href="#"
+                href="/settings"
                 className="block px-4 py-2 hover:bg-gray-100 font-semibold"
               >
                 Settings
               </a>
               <hr className="my-2" />
               <a
-                href="#"
+                href="/signin"
                 className="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold"
               >
                 Sign Out

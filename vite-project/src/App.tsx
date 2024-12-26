@@ -12,11 +12,12 @@ import FundingPage from "./pages/funding";
 import CopyTradingSection from "./pages/CopyTrade";
 import DashboardNav from "./components/DashboardNav";
 import ReferFriendPage from "./pages/Refer";
+import MarketDashboard from "./pages/Market";
+import ProfilePage from "./pages/Profile";
 
 function App() {
   return (
     <>
-    
       <Router>
         <Routes>
           <Route path="/" element={<Navbar />} />
@@ -29,6 +30,8 @@ function App() {
           <Route path="funding" element={<FundingPage />} />
           <Route path="trade" element={<CopyTradingSection />} />
           <Route path="Refer-friend" element={<ReferFriendPage />} />
+          <Route path="market" element={<MarketDashboard />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Routes>
       </Router>
     </>

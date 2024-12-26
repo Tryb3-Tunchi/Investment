@@ -22,3 +22,34 @@ export const Button = ({ children, className = "" }) => (
     {children}
   </button>
 );
+
+export const Input = ({ className = "", ...props }) => (
+  <input
+    className={`px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none w-full ${className}`}
+    {...props}
+  />
+);
+
+export const Alert = ({ children, className = "" }) => (
+  <div
+    className={`p-4 rounded-lg border border-blue-200 bg-blue-50 ${className}`}
+  >
+    {children}
+  </div>
+);
+
+export const AlertTitle = ({ children, className = "" }) => (
+  <h5
+    className={`font-medium text-gray-900 mb-1 ${className}`}
+  >
+    {children}
+  </h5>
+);
+
+export const AlertDescription = ({ children, className = "" }) => (
+  <div
+    className={`text-sm text-gray-600 ${className}`}
+  >
+    {children}
+  </div>
+);
