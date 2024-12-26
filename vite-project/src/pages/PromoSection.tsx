@@ -1,5 +1,6 @@
 import React from "react";
 import { Gift, Trophy, Users, BookOpen, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const PromoSection = () => {
   return (
@@ -20,9 +21,12 @@ const PromoSection = () => {
                 for each person you refer.
               </p>
               <div className="flex items-center space-x-4">
-                <button className="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
-                  See Promo
-                </button>
+                <Link to="/Refer-friend">
+                  {" "}
+                  <button className="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                    See Promo
+                  </button>
+                </Link>
                 <span className="text-sm">*T&Cs apply</span>
               </div>
             </div>
@@ -70,12 +74,14 @@ const PromoSection = () => {
               </h4>
               <p className="mb-4">Copy Top Traders and Earn When They Do.</p>
               <div className="flex items-center space-x-4">
-                <button className="bg-white text-green-600 px-4 py-2 rounded-lg font-semibold hover:bg-green-50 transition-colors">
-                  Start Copy Trading
-                </button>
-                <button className="bg-transparent border-2 border-white px-4 py-2 rounded-lg font-semibold hover:bg-green-500 transition-colors">
-                  Read more
-                </button>
+                <Link to="/trade">
+                  <button className="bg-white text-green-600 px-4 py-2 mr-3 rounded-lg font-semibold hover:bg-green-50 transition-colors">
+                    Start Copy Trading
+                  </button>
+                  <button className="bg-transparent border-2 border-white px-4 py-2 rounded-lg font-semibold hover:bg-green-500 transition-colors">
+                    Read more
+                  </button>
+                </Link>
               </div>
               <p className="text-sm mt-2">
                 Your capital is at risk. *T&Cs apply.

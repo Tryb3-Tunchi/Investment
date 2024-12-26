@@ -19,14 +19,14 @@ const DashboardNav = () => {
   const [isProfileOpen, setProfileOpen] = useState(false);
 
   const menuItems = [
-    { title: "Home", path: "/", icon: "home" },
+    { title: "Home", path: "/home", icon: "home" },
     { title: "My Accounts", path: "/account", icon: "user" },
     { title: "Funding", path: "/funding", icon: "dollar" },
-    { title: "Copy Trading", path: "trade", icon: "copy" },
-    { title: "Competitions", path: "", icon: "trophy" },
-    { title: "Refer A Friend", path: "", icon: "users" },
+    { title: "Copy Trading", path: "/trade", icon: "copy" },
+    // { title: "Competitions", path: "/p", icon: "trophy" },
+    { title: "Refer A Friend", path: "/Refer-friend", icon: "users" },
     { title: "Market Intelligence", path: "", icon: "chart" },
-    { title: "XM Live", path: "", icon: "video" },
+    // { title: "XM Live", path: "", icon: "video" },
     { title: "More", path: "", icon: "more" },
   ];
 
@@ -66,10 +66,13 @@ const DashboardNav = () => {
 
         {/* Right Section - Hidden on mobile */}
         <div className="hidden md:flex items-center space-x-4">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center font-semibold">
-            <DollarSign className="h-4 w-4 mr-2" />
-            Add Balance
-          </button>
+          <Link to="/funding">
+            {" "}
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center font-semibold">
+              <DollarSign className="h-4 w-4 mr-2" />
+              Add Balance
+            </button>
+          </Link>
 
           <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 flex items-center font-semibold">
             <Wallet className="h-4 w-4 mr-2" />
@@ -182,10 +185,13 @@ const DashboardNav = () => {
 
             {/* Mobile-only buttons */}
             <div className="md:hidden px-6 pt-4 space-y-3">
-              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center font-semibold">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Add Balance
-              </button>
+              <Link to="/funding">
+                {" "}
+                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center font-semibold">
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Add Balance
+                </button>
+              </Link>
 
               <button className="w-full px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 flex items-center justify-center font-semibold">
                 <Wallet className="h-4 w-4 mr-2" />

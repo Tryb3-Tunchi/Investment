@@ -20,6 +20,8 @@ import {
   RefreshCcw,
   Link,
 } from "lucide-react";
+import Footer from "../components/Footer";
+import MainFooter from "../components/Mainfooter";
 
 // const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
 //     <div className={`bg-white rounded-lg shadow-lg ${className}`}>
@@ -278,9 +280,10 @@ const MyAccount = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 pb-16">
         {showTrading ? <TradingView /> : <AccountOverview />}
       </div>
+      <MainFooter />
     </div>
   );
 };

@@ -54,12 +54,15 @@ const AccountOverview = () => {
         <p className="text-2xl font-bold py-4">
           Verify your account now to start trading
         </p>
-        <Link to="/verify"> <button
-          onClick={() => Navigate("verify")}
-          className="px-6  py-2 bg-blue-600 text-white rounded-lg font-semibold"
-        >
-          Verify Now
-        </button></Link>
+        <Link to="/verify">
+          {" "}
+          <button
+            onClick={() => Navigate("verify")}
+            className="px-6  py-2 bg-blue-600 text-white rounded-lg font-semibold"
+          >
+            Verify Now
+          </button>
+        </Link>
       </div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">Accounts Overview</h1>
@@ -156,14 +159,15 @@ const AccountOverview = () => {
             </div>
           </div>
 
-          <div className="flex space-x-4">
-            <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold flex items-center justify-center">
+          <div className="flex  space-x-4">
+            <button className="flex-1  px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold flex items-center justify-center">
               <Download className="h-4 w-4 mr-2" />
-              Deposit
+              <Link to="/funding"> Deposit</Link>
             </button>
+
             <button className="flex-1 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg font-semibold flex items-center justify-center">
               <Upload className="h-4 w-4 mr-2" />
-              Withdraw
+              <Link to="/withdraw">Withdraw</Link>
             </button>
           </div>
         </div>

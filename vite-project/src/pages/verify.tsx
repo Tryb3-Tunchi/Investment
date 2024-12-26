@@ -6,6 +6,7 @@ import {
   AlertCircle,
   ArrowLeft,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const VerifyDetails = () => {
   // Function to handle input changes
@@ -384,6 +385,13 @@ const VerifyDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      <div className="flex items-center space-x-2 mb-6">
+        <Link to="/home">
+          <span className="pl-4 text-gray-600">Home</span>
+        </Link>
+        <span className="text-gray-400">/</span>
+        <span className="text-gray-900">Verification</span>
+      </div>
       <div className="max-w-2xl mx-auto px-4">
         {/* Progress Bar */}
         <div className="mb-8">

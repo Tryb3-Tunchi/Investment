@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
-import { ChevronDown, X, Mail, Facebook, Globe, Menu } from 'lucide-react';
+import React, { useState } from "react";
+import { ChevronDown, X, Mail, Facebook, Globe, Menu } from "lucide-react";
+import { Link } from "react-router-dom";
+import LoginModal from "./AuthLogin";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTradingOpen, setIsTradingOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [activeAuthTab, setActiveAuthTab] = useState('signin');
+  const [activeAuthTab, setActiveAuthTab] = useState("signin");
   const [termsAccepted, setTermsAccepted] = useState(false);
 
-  const languages = ['English', 'Español', 'Français', '中文'];
-  
+  const languages = ["English", "Español", "Français", "中文"];
+
   const tradingSubmenu = {
-    ACCOUNTS: ['Account Types'],
+    ACCOUNTS: ["Account Types"],
     MARKETS: [
-      'Forex Trading',
-      'Cryptocurrencies',
-      'Stock Derivatives',
-      'Turbo Stocks',
-      'Commodities',
-      'Equity Indices',
-      'Precious Metals',
-      'Energies',
-      'Shares',
-      'Thematic Indices'
-    ]
+      "Forex Trading",
+      "Cryptocurrencies",
+      "Stock Derivatives",
+      "Turbo Stocks",
+      "Commodities",
+      "Equity Indices",
+      "Precious Metals",
+      "Energies",
+      "Shares",
+      "Thematic Indices",
+    ],
   };
 
   return (
@@ -37,11 +39,15 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#" className="hover:text-blue-600">Trading</a>
-            <a href="#" className="hover:text-blue-600">Discover</a>
+            <a href="#" className="hover:text-blue-600">
+              Trading
+            </a>
+            <a href="#" className="hover:text-blue-600">
+              Discover
+            </a>
             {/* Trading Menu */}
             <div className="relative group">
-              <button 
+              <button
                 onClick={() => setIsTradingOpen(!isTradingOpen)}
                 className="flex items-center hover:text-blue-600"
               >
@@ -55,7 +61,7 @@ const Navbar = () => {
                     <div>
                       <h3 className="font-bold text-gray-800 mb-4">ACCOUNTS</h3>
                       <div className="grid gap-2">
-                        {tradingSubmenu.ACCOUNTS.map(item => (
+                        {tradingSubmenu.ACCOUNTS.map((item) => (
                           <a
                             key={item}
                             href="#"
@@ -69,7 +75,7 @@ const Navbar = () => {
                     <div>
                       <h3 className="font-bold text-gray-800 mb-4">MARKETS</h3>
                       <div className="grid grid-cols-2 gap-2">
-                        {tradingSubmenu.MARKETS.map(item => (
+                        {tradingSubmenu.MARKETS.map((item) => (
                           <a
                             key={item}
                             href="#"
@@ -100,7 +106,7 @@ const Navbar = () => {
 
               {isLangOpen && (
                 <div className="absolute top-full right-0 w-40 bg-white shadow-lg rounded-xl py-2 mt-2">
-                  {languages.map(lang => (
+                  {languages.map((lang) => (
                     <button
                       key={lang}
                       className="w-full text-left px-4 py-2 hover:bg-blue-50 text-gray-600 hover:text-blue-600"
@@ -117,21 +123,23 @@ const Navbar = () => {
             <button
               onClick={() => {
                 setIsAuthModalOpen(true);
-                setActiveAuthTab('signin');
+                setActiveAuthTab("signin");
               }}
               className="px-4 py-2 text-blue-600 hover:text-blue-700"
             >
               Sign In
             </button>
-            <button
-              onClick={() => {
-                setIsAuthModalOpen(true);
-                setActiveAuthTab('signup');
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              Sign Up
-            </button>
+            <Link to="/signUp">
+              <button
+                onClick={() => {
+                  setIsAuthModalOpen(true);
+                  setActiveAuthTab("signUp");
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Sign Up
+              </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -149,11 +157,19 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
+      <div
+        className={`md:hidden transition-all duration-300 ease-in-out ${
+          isMenuOpen ? "max-h-screen" : "max-h-0 overflow-hidden"
+        }`}
+      >
         <div className="bg-gray-50 border-t px-4 py-2 space-y-2">
-          <a href="#" className="block py-2 px-4 hover:bg-blue-50 rounded-lg">Trading</a>
-          <a href="#" className="block py-2 px-4 hover:bg-blue-50 rounded-lg">Discover</a>
-          
+          <a href="#" className="block py-2 px-4 hover:bg-blue-50 rounded-lg">
+            Trading
+          </a>
+          <a href="#" className="block py-2 px-4 hover:bg-blue-50 rounded-lg">
+            Discover
+          </a>
+
           {/* Mobile Trading Menu */}
           <div>
             <button
@@ -161,15 +177,21 @@ const Navbar = () => {
               className="flex items-center justify-between w-full py-2 px-4 hover:bg-blue-50 rounded-lg"
             >
               <span>Promotions Company</span>
-              <ChevronDown className={`w-4 h-4 transform transition-transform ${isTradingOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown
+                className={`w-4 h-4 transform transition-transform ${
+                  isTradingOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
-            
+
             {isTradingOpen && (
               <div className="mt-2 ml-4 space-y-4">
                 <div>
-                  <h3 className="font-bold text-gray-800 px-4 py-2">ACCOUNTS</h3>
+                  <h3 className="font-bold text-gray-800 px-4 py-2">
+                    ACCOUNTS
+                  </h3>
                   <div className="space-y-1">
-                    {tradingSubmenu.ACCOUNTS.map(item => (
+                    {tradingSubmenu.ACCOUNTS.map((item) => (
                       <a
                         key={item}
                         href="#"
@@ -183,7 +205,7 @@ const Navbar = () => {
                 <div>
                   <h3 className="font-bold text-gray-800 px-4 py-2">MARKETS</h3>
                   <div className="space-y-1">
-                    {tradingSubmenu.MARKETS.map(item => (
+                    {tradingSubmenu.MARKETS.map((item) => (
                       <a
                         key={item}
                         href="#"
@@ -208,12 +230,16 @@ const Navbar = () => {
                 <Globe className="w-5 h-5 mr-2" />
                 Language
               </span>
-              <ChevronDown className={`w-4 h-4 transform transition-transform ${isLangOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown
+                className={`w-4 h-4 transform transition-transform ${
+                  isLangOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
-            
+
             {isLangOpen && (
               <div className="mt-2 ml-4 space-y-1">
-                {languages.map(lang => (
+                {languages.map((lang) => (
                   <button
                     key={lang}
                     className="block w-full text-left py-2 px-4 text-gray-600 hover:bg-blue-50 rounded-lg"
@@ -231,7 +257,7 @@ const Navbar = () => {
             <button
               onClick={() => {
                 setIsAuthModalOpen(true);
-                setActiveAuthTab('signin');
+                setActiveAuthTab("signin");
                 setIsMenuOpen(false);
               }}
               className="w-full py-2 px-4 text-blue-600 hover:bg-blue-50 rounded-lg"
@@ -241,7 +267,7 @@ const Navbar = () => {
             <button
               onClick={() => {
                 setIsAuthModalOpen(true);
-                setActiveAuthTab('signup');
+                setActiveAuthTab("signup");
                 setIsMenuOpen(false);
               }}
               className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -253,6 +279,18 @@ const Navbar = () => {
       </div>
 
       {/* Auth Modal remains the same */}
+      <LoginModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLogin={(formData, isSignUp, e) => {
+          e.preventDefault();
+          if (isSignUp) {
+            console.log("Signing up with data:", formData);
+          } else {
+            console.log("Logging in with data:", formData);
+          }
+        }}
+      />
       {/* ... (previous auth modal code) ... */}
     </nav>
   );

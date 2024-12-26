@@ -8,10 +8,15 @@ import SignUpPage from "./components/login/signUp";
 import MainHome from "./pages/MainHome";
 import VerifyDetails from "./pages/verify";
 import MyAccount from "./pages/MyAccount";
+import FundingPage from "./pages/funding";
+import CopyTradingSection from "./pages/CopyTrade";
+import DashboardNav from "./components/DashboardNav";
+import ReferFriendPage from "./pages/Refer";
 
 function App() {
   return (
     <>
+    
       <Router>
         <Routes>
           <Route path="/" element={<Navbar />} />
@@ -21,6 +26,9 @@ function App() {
           <Route path="home" element={<MainHome />} />
           <Route path="verify" element={<VerifyDetails />} />
           <Route path="account" element={<MyAccount />} />
+          <Route path="funding" element={<FundingPage />} />
+          <Route path="trade" element={<CopyTradingSection />} />
+          <Route path="Refer-friend" element={<ReferFriendPage />} />
         </Routes>
       </Router>
     </>
