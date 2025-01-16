@@ -19,24 +19,25 @@ import AdminDashboard from "./pages/Admin/AdminPages";
 function App() {
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Navbar />} />
-          <Route index element={<Home />} />
-          <Route path="signin" element={<SignInPage />} />
-          <Route path="signUp" element={<SignUpPage />} />
-          <Route path="home" element={<MainHome />} />
-          <Route path="verify" element={<VerifyDetails />} />
-          <Route path="account" element={<MyAccount />} />
-          <Route path="funding" element={<FundingPage />} />
-          <Route path="trade" element={<CopyTradingSection />} />
-          <Route path="Refer-friend" element={<ReferFriendPage />} />
-          <Route path="market" element={<MarketDashboard />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="admin" element={<AdminDashboard />} />
-          
-        </Routes>
-      </Router>
+      <div className="bg- text-w">
+        <Router>
+          <Routes>
+            <Route path="/" element={<Navbar />} />
+            <Route index element={<Home />} />
+            <Route path="signin" element={<SignInPage />} />
+            <Route path="signUp" element={<SignUpPage />} />
+            <Route path="home" element={<MainHome />} />
+            <Route path="verify" element={<VerifyDetails />} />
+            <Route path="account" element={<MyAccount />} />
+            <Route path="funding" element={<FundingPage />} />
+            <Route path="trade" element={<CopyTradingSection />} />
+            <Route path="Refer-friend" element={<ReferFriendPage />} />
+            <Route path="market" element={<MarketDashboard />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="admin" element={<AdminDashboard />} />
+          </Routes>
+        </Router>
+      </div>
     </>
   );
 }

@@ -1,13 +1,7 @@
-import React, { useState } from "react";
-import {
-  MoreVertical,
-  Download,
-  Upload,
-  RefreshCw,
-  Plus,
-  ChevronRight,
-} from "lucide-react";
-import { Link, Navigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { MoreVertical, Download, Upload, Plus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface AccountData {
   type: string;
@@ -18,46 +12,54 @@ interface AccountData {
   accountStyle: string;
 }
 
-interface AccountsState {
-  real: AccountData;
-  demo: AccountData;
-}
-
 const AccountOverview = () => {
   const [accountType, setAccountType] = useState<"real" | "demo">("real");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const accounts: AccountsState = {
+  const [accounts, setAccounts] = useState<Record<string, AccountData>>({
     real: {
-      type: "RealMT5",
-      accountNumber: "380590917",
-      balance: 2500,
-      profit: 0,
-      currency: "USD",
-      accountStyle: "Standard",
+      type: "",
+      accountNumber: "",
+      balance: 110,
+      profit: 100,
+      currency: "",
+      accountStyle: "",
     },
     demo: {
-      type: "DemoMT5",
-      accountNumber: "380590918",
-      balance: 10000,
-      profit: 250,
-      currency: "USD",
-      accountStyle: "Standard",
+      type: "",
+      accountNumber: "",
+      balance: 1000,
+      profit: 25000,
+      currency: "",
+      accountStyle: "",
     },
-  };
+  });
+  const navigate = useNavigate();
+
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const response = await axios.get("/api/accounts"); // Update the endpoint as per your backend API
+        setAccounts(response.data);
+      } catch (error) {
+        console.error("Error fetching accounts:", error);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-
-      <div className=" my-16 font-semibold text-center border-b-4 pb-10 hidden:">
+      <div className="my-16 font-semibold text-center border-b-4 pb-10">
         <p className="text-2xl font-bold py-4">
           Verify your account now to start trading
         </p>
         <Link to="/verify">
           <button
-            onClick={() => Navigate("verify")}
-            className="px-6  py-2 bg-blue-600 text-white rounded-lg font-semibold"
+            onClick={() => navigate("verify")}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold"
           >
             Verify Now
           </button>
@@ -101,14 +103,14 @@ const AccountOverview = () => {
           <div className="flex justify-between items-start mb-4">
             <div>
               <h2 className="font-bold text-xl">
-                {accounts[accountType].type}
+                {accounts[accountType]?.type || "Loading..."}
               </h2>
               <p className="text-gray-600">
-                {accounts[accountType].accountStyle},{" "}
-                {accounts[accountType].currency}
+                {accounts[accountType]?.accountStyle},{" "}
+                {accounts[accountType]?.currency}
               </p>
               <p className="text-gray-500 text-sm mt-1">
-                #{accounts[accountType].accountNumber}
+                #{accounts[accountType]?.accountNumber}
               </p>
             </div>
             <div className="relative">
@@ -119,7 +121,6 @@ const AccountOverview = () => {
                 <MoreVertical className="h-5 w-5" />
               </button>
 
-              {/* Custom Dropdown Menu */}
               {isMenuOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-10">
                   <button className="w-full px-4 py-2 text-left hover:bg-gray-100">
@@ -148,18 +149,18 @@ const AccountOverview = () => {
           <div className="mb-6">
             <p className="text-gray-600 mb-1">Balance</p>
             <h3 className="text-2xl font-bold">
-              ${accounts[accountType].balance.toLocaleString()}
+              ${accounts[accountType]?.balance.toLocaleString()}
             </h3>
             <div className="mt-2">
               <p className="text-gray-600 mb-1">Profit/Loss</p>
               <h3 className="text-3xl font-bold text-green-500">
-                ${accounts[accountType].profit.toLocaleString()}
+                ${accounts[accountType]?.profit.toLocaleString()}
               </h3>
             </div>
           </div>
 
-          <div className="flex  space-x-4">
-            <button className="flex-1  px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold flex items-center justify-center">
+          <div className="flex space-x-4">
+            <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold flex items-center justify-center">
               <Download className="h-4 w-4 mr-2" />
               <Link to="/funding"> Deposit</Link>
             </button>
@@ -183,44 +184,6 @@ const AccountOverview = () => {
           <button className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold">
             Get Started
           </button>
-        </div>
-      </div>
-
-      {/* Promos Section */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-6">
-          Available Promos & Deposit Bonuses!
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Unlock Exciting Rewards with Our Promotions!
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Promo Card 1 */}
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <h3 className="font-bold text-xl mb-2">Loyalty Deposit Bonus</h3>
-            <p className="text-gray-600 mb-4">Consecutive Deposits</p>
-            <div className="mb-4">
-              <p className="text-3xl font-bold text-blue-600">50% bonus</p>
-              <p className="text-gray-600">$500 Remaining to claim</p>
-            </div>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold">
-              Deposit
-            </button>
-          </div>
-
-          {/* Promo Card 2 */}
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <h3 className="font-bold text-xl mb-2">Loyalty Deposit Bonus</h3>
-            <p className="text-gray-600 mb-4">Consecutive Deposits</p>
-            <div className="mb-4">
-              <p className="text-3xl font-bold text-blue-600">20% bonus</p>
-              <p className="text-gray-600">$4,500 Remaining to claim</p>
-            </div>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold">
-              Deposit
-            </button>
-          </div>
         </div>
       </div>
     </div>

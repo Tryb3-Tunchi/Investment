@@ -3,11 +3,7 @@ import { Card, CardContent } from "../components/Card";
 import {
   ArrowUp,
   ArrowDown,
-  Play,
-  TrendingUp,
-  Calendar,
-  Tv,
-  Radio,
+ 
 } from "lucide-react";
 import DashboardNav from "../components/DashboardNav";
 

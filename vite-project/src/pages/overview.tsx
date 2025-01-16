@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 // import Link from 'next/link';
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 const Overview = () => {
   // Company logos for the carousel

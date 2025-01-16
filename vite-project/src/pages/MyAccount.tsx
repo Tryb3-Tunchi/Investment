@@ -18,9 +18,8 @@ import {
   Download,
   Upload,
   RefreshCcw,
-  Link,
 } from "lucide-react";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 import MainFooter from "../components/Mainfooter";
 
 // const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (

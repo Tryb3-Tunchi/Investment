@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "../components/Card";
 import { Button } from "../components/Card";
-import { Users, Wallet, History, Gift, ChevronDown } from "lucide-react";
+import {  Wallet, History, Gift,  } from "lucide-react";
 import { Link } from "react-router-dom";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 import MainFooter from "../components/Mainfooter";
 
 const ReferFriendPage = () => {
   const [selectedYear, setSelectedYear] = useState("2024");
-  const [activeTab, setActiveTab] = useState("history");
+  // const [activeTab, setActiveTab] = useState("history");
 
   const years = ["2019", "2020", "2021", "2022", "2023", "2024"];
 

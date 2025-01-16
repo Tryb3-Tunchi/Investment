@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown, X, Mail, Facebook, Globe, Menu } from "lucide-react";
+import { ChevronDown, X, Globe, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoginModal from "./AuthLogin";
 
@@ -9,7 +9,7 @@ const Navbar = () => {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [activeAuthTab, setActiveAuthTab] = useState("signin");
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  // const [termsAccepted, setTermsAccepted] = useState(false);
 
   const languages = ["English", "Español", "Français", "中文"];
 
@@ -28,6 +28,8 @@ const Navbar = () => {
       "Thematic Indices",
     ],
   };
+
+  if (activeAuthTab) return null
 
   return (
     <nav className="fixed top-0 w-full bg-white shadow-md z-50">

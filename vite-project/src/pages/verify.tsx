@@ -1,416 +1,170 @@
-import React, { useState } from "react";
-import {
-  ArrowRight,
-  Upload,
-  Check,
-  AlertCircle,
-  ArrowLeft,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const VerifyDetails = () => {
-  // Function to handle input changes
-  const handleInputChange = (e) => {
-    const { name, value, type, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "file" ? files[0] : value,
-    }));
-  };
+interface FormData {
+  fullName: string;
+  dateOfBirth: string;
+  phoneNumber: string;
+  address: string;
+  country: string;
+  postalCode: string;
+  passport: File | null;
+  idCard: File | null;
+  uniqueNumber: string;
+  email: string;
+  gender: string;
+  nationality: string;
+  city: string;
+  depositMethod: string;
+  bankName: string;
+  accountNumber: string;
+  cryptoWallet: string;
+}
 
-  // Function to handle the next step
-  const handleNext = () => {
-    if (validateStep(step)) {
-      setStep((prev) => prev + 1);
-    }
-  };
-
-  // Function to handle file changes
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: files[0],
-    }));
-  };
-
-  // Function to render error messages
-  const renderError = (field) => {
-    return errors[field] ? (
-      <span className="text-red-500 text-sm">{errors[field]}</span>
-    ) : null;
-  };
+const VerifyDetails: React.FC = () => {
   const [step, setStep] = useState(1);
-  const totalSteps = 6; // Updated total steps to include the new step
-  const [errors, setErrors] = useState({});
-
-  // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fullName: "",
     dateOfBirth: "",
     phoneNumber: "",
     address: "",
     country: "",
     postalCode: "",
-    tradingCurrency: "",
-    preferredAmount: "",
-    hasExperience: null,
     passport: null,
     idCard: null,
     uniqueNumber: "",
-    employmentStatus: "",
-    occupation: "",
-    annualIncome: "",
-    sourceOfFunds: "",
-    bankName: "", // Make bank information optional
-    accountNumber: "", // Make account number optional
-    routingNumber: "", // Make routing number optional
-    accountType: "",
-    cryptoCurrency: "", // New field for cryptocurrency
-    cryptoAmount: "", // New field for cryptocurrency amount
+    email: "",
+    gender: "",
+    nationality: "",
+    city: "",
+    depositMethod: "",
+    bankName: "",
+    accountNumber: "",
+    cryptoWallet: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
-  // Validation function remains the same as before, adding new fields
-  const validateStep = (currentStep) => {
-    const newErrors = {};
+  const totalSteps = 6; // Increment total steps to include the new step
 
-    switch (currentStep) {
-      // Previous validation cases remain the same (1-5)
-      case 1:
-        if (!formData.fullName.trim())
-          newErrors.fullName = "Full name is required";
-        if (!formData.dateOfBirth)
-          newErrors.dateOfBirth = "Date of birth is required";
-        if (!formData.phoneNumber.trim())
-          newErrors.phoneNumber = "Phone number is required";
-        break;
-      case 2:
-        if (!formData.address.trim()) newErrors.address = "Address is required";
-        if (!formData.country.trim()) newErrors.country = "Country is required";
-        if (!formData.postalCode.trim())
-          newErrors.postalCode = "Postal code is required";
-        break;
-      case 3:
-        if (!formData.tradingCurrency)
-          newErrors.tradingCurrency = "Currency is required";
-        if (!formData.preferredAmount)
-          newErrors.preferredAmount = "Amount is required";
-        if (!formData.employmentStatus)
-          newErrors.employmentStatus = "Employment status is required";
-        if (!formData.occupation)
-          newErrors.occupation = "Occupation is required";
-        if (!formData.annualIncome)
-          newErrors.annualIncome = "Annual income is required";
-        if (!formData.sourceOfFunds)
-          newErrors.sourceOfFunds = "Source of funds is required";
-        break;
-      case 4:
-        if (formData.hasExperience === null)
-          newErrors.hasExperience = "Please select an option";
-        if (!formData.bankName) newErrors.bankName = "Bank name is required";
-        if (!formData.accountNumber)
-          newErrors.accountNumber = "Account number is required";
-        if (!formData.routingNumber)
-          newErrors.routingNumber = "Routing number is required";
-        if (!formData.accountType)
-          newErrors.accountType = "Account type is required";
-        break;
-      case 5:
-        if (!formData.passport)
-          newErrors.passport = "Passport photo is required";
-        if (!formData.idCard) newErrors.idCard = "ID card is required";
-        if (!formData.uniqueNumber.trim())
-          newErrors.uniqueNumber = "Unique number is required";
-        break;
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  // Handle input changes
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Previous handlers remain the same
-
-  const handleSubmit = async () => {
-    if (validateStep(step)) {
-      // Here you would typically send the form data to your backend
-      console.log("Form submitted:", formData);
-      // Add your submission logic here
+  // Handle file changes
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = e.target;
+    if (files && files[0]) {
+      setFormData((prevData) => ({ ...prevData, [name]: files[0] }));
     }
   };
 
-  // Modified Step 3 to include employment details
-  const renderStep3 = () => (
-    <div>
-      <h2 className="text-2xl font-bold mb-6">Financial Information</h2>
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Employment Status
-            </label>
-            <select
-              name="employmentStatus"
-              value={formData.employmentStatus}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.employmentStatus ? "border-red-500" : ""
-              }`}
-            >
-              <option value="">Select Status</option>
-              <option value="employed">Employed</option>
-              <option value="self-employed">Self-Employed</option>
-              <option value="retired">Retired</option>
-              <option value="student">Student</option>
-            </select>
-            {renderError("employmentStatus")}
-          </div>
+  // Render errors
+  const renderError = (field: keyof FormData) =>
+    errors[field] && (
+      <div className="text-red-500 text-sm">{errors[field]}</div>
+    );
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Occupation</label>
-            <input
-              type="text"
-              name="occupation"
-              value={formData.occupation}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.occupation ? "border-red-500" : ""
-              }`}
-            />
-            {renderError("occupation")}
-          </div>
-        </div>
+  // Validate the current step
+  const validateCurrentStep = (): boolean => {
+    const validationErrors: Record<string, string> = {};
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Annual Income
-            </label>
-            <input
-              type="number"
-              name="annualIncome"
-              value={formData.annualIncome}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.annualIncome ? "border-red-500" : ""
-              }`}
-              placeholder="Enter annual income"
-            />
-            {renderError("annualIncome")}
-          </div>
+    if (step === 1) {
+      if (!formData.fullName)
+        validationErrors.fullName = "Full Name is required.";
+      if (!formData.dateOfBirth)
+        validationErrors.dateOfBirth = "Date of Birth is required.";
+      if (!formData.phoneNumber)
+        validationErrors.phoneNumber = "Phone Number is required.";
+      if (!formData.email) validationErrors.email = "Email is required.";
+    } else if (step === 2) {
+      if (!formData.address) validationErrors.address = "Address is required.";
+      if (!formData.country) validationErrors.country = "Country is required.";
+      if (!formData.city) validationErrors.city = "City is required.";
+      if (!formData.postalCode)
+        validationErrors.postalCode = "Postal Code is required.";
+    } else if (step === 3) {
+      if (!formData.gender) validationErrors.gender = "Gender is required.";
+      if (!formData.nationality)
+        validationErrors.nationality = "Nationality is required.";
+    } else if (step === 4) {
+      if (!formData.depositMethod)
+        validationErrors.depositMethod = "Deposit method is required.";
+      if (formData.depositMethod === "Bank" && !formData.bankName)
+        validationErrors.bankName = "Bank Name is required.";
+      if (formData.depositMethod === "Bank" && !formData.accountNumber)
+        validationErrors.accountNumber = "Account Number is required.";
+      if (formData.depositMethod === "Crypto" && !formData.cryptoWallet)
+        validationErrors.cryptoWallet = "Crypto Wallet is required.";
+    } else if (step === 5) {
+      if (!formData.passport)
+        validationErrors.passport = "Passport photo is required.";
+      if (!formData.idCard) validationErrors.idCard = "ID card is required.";
+      if (!formData.uniqueNumber)
+        validationErrors.uniqueNumber = "SSN/Unique Number is required.";
+    }
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Source of Funds
-            </label>
-            <select
-              name="sourceOfFunds"
-              value={formData.sourceOfFunds}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.sourceOfFunds ? "border-red-500" : ""
-              }`}
-            >
-              <option value="">Select Source</option>
-              <option value="salary">Salary</option>
-              <option value="investments">Investments</option>
-              <option value="savings">Savings</option>
-              <option value="inheritance">Inheritance</option>
-            </select>
-            {renderError("sourceOfFunds")}
-          </div>
-        </div>
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  };
 
-        {/* Existing trading preferences fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Preferred Trading Currency
-            </label>
-            <select
-              name="tradingCurrency"
-              value={formData.tradingCurrency}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.tradingCurrency ? "border-red-500" : ""
-              }`}
-            >
-              <option value="">Select Currency</option>
-              <option value="USD">USD - US Dollar</option>
-              <option value="EUR">EUR - Euro</option>
-              <option value="GBP">GBP - British Pound</option>
-              <option value="JPY">JPY - Japanese Yen</option>
-            </select>
-            {renderError("tradingCurrency")}
-          </div>
+  // Handle "Next" button click
+  const handleNext = () => {
+    if (validateCurrentStep()) {
+      setStep((prevStep) => prevStep + 1);
+    }
+  };
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Preferred Trading Amount
-            </label>
-            <input
-              type="number"
-              name="preferredAmount"
-              value={formData.preferredAmount}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.preferredAmount ? "border-red-500" : ""
-              }`}
-              placeholder="Enter amount"
-              min="0"
-            />
-            {renderError("preferredAmount")}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  // Handle "Previous" button click
+  const handlePrevious = () => {
+    setStep((prevStep) => prevStep - 1);
+  };
 
-  // Add bank details to Step 4
-  const renderStep4 = () => (
-    <div>
-      <h2 className="text-2xl font-bold mb-6">Banking Information</h2>
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Bank Name</label>
-            <input
-              type="text"
-              name="bankName"
-              value={formData.bankName}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.bankName ? "border-red-500" : ""
-              }`}
-            />
-            {renderError("bankName")}
-          </div>
+  // Handle form submission
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (validateCurrentStep()) {
+      setShowModal(true);
+      // setTimeout(() => {
+      //   // Show the modal first
+      //   navigate("/home");
+      // }, 3000);
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Account Type
-            </label>
-            <select
-              name="accountType"
-              value={formData.accountType}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.accountType ? "border-red-500" : ""
-              }`}
-            >
-              <option value="">Select Type</option>
-              <option value="checking">Checking</option>
-              <option value="savings">Savings</option>
-            </select>
-            {renderError("accountType")}
-          </div>
-        </div>
+      try {
+        const formDataToSend = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+          if (value !== null) {
+            formDataToSend.append(key, value as string | Blob);
+          }
+        });
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Account Number
-            </label>
-            <input
-              type="text"
-              name="accountNumber"
-              value={formData.accountNumber}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.accountNumber ? "border-red-500" : ""
-              }`}
-            />
-            {renderError("accountNumber")}
-          </div>
+        const response = await fetch("https://example.com/api/submit", {
+          method: "POST",
+          body: formDataToSend,
+        });
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Routing Number
-            </label>
-            <input
-              type="text"
-              name="routingNumber"
-              value={formData.routingNumber}
-              onChange={handleInputChange}
-              className={`w-full p-2 border rounded-lg ${
-                errors.routingNumber ? "border-red-500" : ""
-              }`}
-            />
-            {renderError("routingNumber")}
-          </div>
-        </div>
-
-        {/* Experience question */}
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-4">Trading Experience</h3>
-          <div className="bg-gray-50 p-4 rounded-lg mb-4">
-            <p className="text-gray-700">
-              Have you had any forex education or traded at least 15 times in
-              derivative products such as forex or Contracts for Difference
-              (CFDs)?
-            </p>
-          </div>
-          <div className="flex space-x-4">
-            <button
-              onClick={() => {
-                setFormData((prev) => ({ ...prev, hasExperience: true }));
-                setErrors((prev) => ({ ...prev, hasExperience: "" }));
-              }}
-              className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
-                formData.hasExperience === true
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Yes
-            </button>
-            <button
-              onClick={() => {
-                setFormData((prev) => ({ ...prev, hasExperience: false }));
-                setErrors((prev) => ({ ...prev, hasExperience: "" }));
-              }}
-              className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
-                formData.hasExperience === false
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              No
-            </button>
-          </div>
-          {renderError("hasExperience")}
-        </div>
-      </div>
-    </div>
-  );
+        if (response.ok) {
+          alert("Form submitted successfully!");
+          setStep(1);
+        } else {
+          alert("Failed to submit the form. Please try again.");
+        }
+      } catch (error) {
+        console.log("An error occurred while submitting the form.:", error);
+      }
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="flex items-center space-x-2 mb-6">
-        <Link to="/home">
-          <span className="pl-4 text-gray-600">Home</span>
-        </Link>
-        <span className="text-gray-400">/</span>
-        <span className="text-gray-900">Verification</span>
-      </div>
-      <div className="max-w-2xl mx-auto px-4">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between mb-2">
-            <span className="text-sm font-semibold">Verification Progress</span>
-            <span className="text-sm font-semibold">
-              {Math.round((step / totalSteps) * 100)}%
-            </span>
-          </div>
-          <div className="h-2 bg-gray-200 rounded-full">
-            <div
-              className="h-full bg-blue-600 rounded-full transition-all duration-300"
-              style={{ width: `${(step / totalSteps) * 100}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Form Container */}
-        <div className="bg-white rounded-xl shadow-md p-6">
+    <div className="container mx-auto p-6">
+      <form onSubmit={handleSubmit}>
+        <div className="bg-white p-6 rounded-lg shadow-lg">
           {step === 1 && (
             <div>
               <h2 className="text-2xl font-bold mb-6">Personal Information</h2>
@@ -424,9 +178,7 @@ const VerifyDetails = () => {
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg ${
-                      errors.fullName ? "border-red-500" : ""
-                    }`}
+                    className="w-full p-2 border rounded-lg"
                   />
                   {renderError("fullName")}
                 </div>
@@ -439,9 +191,7 @@ const VerifyDetails = () => {
                     name="dateOfBirth"
                     value={formData.dateOfBirth}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg ${
-                      errors.dateOfBirth ? "border-red-500" : ""
-                    }`}
+                    className="w-full p-2 border rounded-lg"
                   />
                   {renderError("dateOfBirth")}
                 </div>
@@ -454,11 +204,22 @@ const VerifyDetails = () => {
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg ${
-                      errors.phoneNumber ? "border-red-500" : ""
-                    }`}
+                    className="w-full p-2 border rounded-lg"
                   />
                   {renderError("phoneNumber")}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                  {renderError("email")}
                 </div>
               </div>
             </div>
@@ -477,10 +238,7 @@ const VerifyDetails = () => {
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg ${
-                      errors.address ? "border-red-500" : ""
-                    }`}
-                    placeholder="Enter your full address"
+                    className="w-full p-2 border rounded-lg"
                   />
                   {renderError("address")}
                 </div>
@@ -488,21 +246,25 @@ const VerifyDetails = () => {
                   <label className="block text-sm font-medium mb-1">
                     Country
                   </label>
-                  <select
+                  <input
+                    type="text"
                     name="country"
                     value={formData.country}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg ${
-                      errors.country ? "border-red-500" : ""
-                    }`}
-                  >
-                    <option value="">Select Country</option>
-                    <option value="US">United States</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="CA">Canada</option>
-                    <option value="AU">Australia</option>
-                  </select>
+                    className="w-full p-2 border rounded-lg"
+                  />
                   {renderError("country")}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">City</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                  {renderError("city")}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
@@ -513,10 +275,7 @@ const VerifyDetails = () => {
                     name="postalCode"
                     value={formData.postalCode}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg ${
-                      errors.postalCode ? "border-red-500" : ""
-                    }`}
-                    placeholder="Enter postal code"
+                    className="w-full p-2 border rounded-lg"
                   />
                   {renderError("postalCode")}
                 </div>
@@ -524,76 +283,147 @@ const VerifyDetails = () => {
             </div>
           )}
 
-          {step === 3 && renderStep3()}
-          {step === 4 && renderStep4()}
+          {step === 3 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">
+                Demographic Information
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Gender
+                  </label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {renderError("gender")}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Nationality
+                  </label>
+                  <input
+                    type="text"
+                    name="nationality"
+                    value={formData.nationality}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                  {renderError("nationality")}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Account Information</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Deposit Method
+                  </label>
+                  <select
+                    name="depositMethod"
+                    value={formData.depositMethod}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                  >
+                    <option value="">Select Deposit Method</option>
+                    <option value="Bank">Bank</option>
+                    <option value="Crypto">Crypto</option>
+                    <option value="Card">Card</option>
+                    <option value="NFT">NFT</option>
+                  </select>
+                  {renderError("depositMethod")}
+                </div>
+                {formData.depositMethod === "Bank" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Bank Name
+                      </label>
+                      <input
+                        type="text"
+                        name="bankName"
+                        value={formData.bankName}
+                        onChange={handleInputChange}
+                        className="w-full p-2 border rounded-lg"
+                      />
+                      {renderError("bankName")}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Account Number
+                      </label>
+                      <input
+                        type="text"
+                        name="accountNumber"
+                        value={formData.accountNumber}
+                        onChange={handleInputChange}
+                        className="w-full p-2 border rounded-lg"
+                      />
+                      {renderError("accountNumber")}
+                    </div>
+                  </>
+                )}
+                {formData.depositMethod === "Crypto" && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Crypto Wallet
+                    </label>
+                    <input
+                      type="text"
+                      name="cryptoWallet"
+                      value={formData.cryptoWallet}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border rounded-lg"
+                    />
+                    {renderError("cryptoWallet")}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {step === 5 && (
             <div>
               <h2 className="text-2xl font-bold mb-6">Identity Verification</h2>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-1">
                     Passport Photo
                   </label>
-                  <div
-                    className={`border-2 border-dashed rounded-lg p-4 ${
-                      errors.passport ? "border-red-500" : "border-gray-300"
-                    }`}
-                  >
-                    <input
-                      type="file"
-                      name="passport"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      id="passport"
-                      accept="image/*"
-                    />
-                    <label
-                      htmlFor="passport"
-                      className="flex flex-col items-center cursor-pointer"
-                    >
-                      <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-600">
-                        {formData.passport
-                          ? formData.passport.name
-                          : "Click to upload passport photo"}
-                      </span>
-                    </label>
-                  </div>
+                  <input
+                    type="file"
+                    name="passport"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="w-full p-2 border rounded-lg"
+                  />
                   {renderError("passport")}
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-1">
                     ID Card
                   </label>
-                  <div
-                    className={`border-2 border-dashed rounded-lg p-4 ${
-                      errors.idCard ? "border-red-500" : "border-gray-300"
-                    }`}
-                  >
-                    <input
-                      type="file"
-                      name="idCard"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      id="idCard"
-                      accept="image/*"
-                    />
-                    <label
-                      htmlFor="idCard"
-                      className="flex flex-col items-center cursor-pointer"
-                    >
-                      <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-600">
-                        {formData.idCard
-                          ? formData.idCard.name
-                          : "Click to upload ID card"}
-                      </span>
-                    </label>
-                  </div>
+                  <input
+                    type="file"
+                    name="idCard"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="w-full p-2 border rounded-lg"
+                  />
                   {renderError("idCard")}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     SSN/Unique Number
@@ -603,10 +433,7 @@ const VerifyDetails = () => {
                     name="uniqueNumber"
                     value={formData.uniqueNumber}
                     onChange={handleInputChange}
-                    className={`w-full p-2 border rounded-lg ${
-                      errors.uniqueNumber ? "border-red-500" : ""
-                    }`}
-                    placeholder="Enter your SSN or unique identification number"
+                    className="w-full p-2 border rounded-lg"
                   />
                   {renderError("uniqueNumber")}
                 </div>
@@ -614,51 +441,53 @@ const VerifyDetails = () => {
             </div>
           )}
 
-          {/* Navigation Buttons */}
-          <div className="mt-8 flex justify-between">
+          <div className="flex justify-between mt-6">
             {step > 1 && (
               <button
-                onClick={() => setStep((prev) => prev - 1)}
-                className="flex items-center px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                type="button"
+                onClick={handlePrevious}
+                className="py-2 px-4 bg-gray-300 text-gray-800 rounded-lg"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Previous
+                <ArrowLeft className="mr-2" />
               </button>
             )}
+
             {step < totalSteps ? (
               <button
+                type="button"
                 onClick={handleNext}
-                className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors ml-auto"
+                className="py-2 px-4 bg-blue-600 text-white rounded-lg"
               >
                 Next
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="ml-2" />
               </button>
             ) : (
               <button
-                onClick={handleSubmit}
-                className="flex items-center px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors ml-auto"
+                type="submit"
+                className="py-2 px-4 bg-green-600 text-white rounded-lg"
               >
                 Submit
-                <Check className="w-4 h-4 ml-2" />
+                <Check className="ml-2" />
               </button>
             )}
           </div>
         </div>
-
-        {/* Steps indicator */}
-        <div className="mt-6 flex justify-center">
-          <div className="flex space-x-2">
-            {[...Array(totalSteps)].map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full ${
-                  index < step ? "bg-blue-600" : "bg-gray-300"
-                }`}
-              />
-            ))}
+      </form>
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-xl font-bold mb-4">Submitted!</h2>
+            <p>Verification in progress. Please wait for further updates.</p>
+            <button
+            
+              onClick={() => navigate("/home")}
+              className="mt-4 py-2 px-4 bg-blue-600 text-white rounded-lg"
+            >
+              Close
+            </button>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

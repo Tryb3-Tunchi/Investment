@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
-import commodities from "../image/commodities.png";
-import Image from "./Image";
+// import commodities from "../image/commodities.png";
+// import Image from "./Image";
 
 const Cards = () => {
   const cardData = [
@@ -99,7 +99,7 @@ const Cards = () => {
               {/* Slanted Image */}
               <div className="absolute right-[-5%] bottom-[-5%] w-[250px] h-[250px] transform rotate-12">
                 <div className="relative w-full h-full">
-                  <Image
+                  <img
                     src={card.image}
                     alt={card.title}
                     layout="fill"
@@ -153,7 +153,7 @@ const Cards = () => {
               </div>
             </div>
             <div className="relative w-64 h-64">
-              <Image
+              <img
                 src="/app-preview.png"
                 alt="XM App Preview"
                 layout="fill"

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, User, FileText, Shield, Scale, LifeBuoy, ChevronRight, AlertCircle } from 'lucide-react';
+import {  User, FileText, Shield, Scale, LifeBuoy, AlertCircle } from 'lucide-react';
 import { Card, CardContent, Input } from '../components/Card';
 import { Button } from '../components/Card';
 import { Alert, AlertTitle, AlertDescription } from '../components/Card';
@@ -161,7 +161,7 @@ const ProfilePage = () => {
             </Card>
 
             <div className="mt-6 flex justify-end">
-              <Button type="submit">Save Changes</Button>
+              <button type="submit">Save Changes</button>type
             </div>
           </form>
         </div>
