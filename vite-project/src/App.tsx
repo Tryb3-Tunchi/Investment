@@ -15,14 +15,17 @@ import ReferFriendPage from "./pages/Refer";
 import MarketDashboard from "./pages/Market";
 import ProfilePage from "./pages/Profile";
 import AdminDashboard from "./pages/Admin/AdminPages";
+import Footer from "./components/Footer";
 
 function App() {
   return (
     <>
       <div className="bg- text-w">
+        <Navbar /> 
+        {/* <Footer /> */}
         <Router>
           <Routes>
-            <Route path="/" element={<Navbar />} />
+            
             <Route index element={<Home />} />
             <Route path="signin" element={<SignInPage />} />
             <Route path="signUp" element={<SignUpPage />} />

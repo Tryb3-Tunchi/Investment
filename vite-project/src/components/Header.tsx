@@ -8,8 +8,6 @@ const Navbar = () => {
   const [isTradingOpen, setIsTradingOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [activeAuthTab, setActiveAuthTab] = useState("signin");
-  // const [termsAccepted, setTermsAccepted] = useState(false);
 
   const languages = ["English", "Español", "Français", "中文"];
 
@@ -29,8 +27,6 @@ const Navbar = () => {
     ],
   };
 
-  if (activeAuthTab) return null
-
   return (
     <nav className="fixed top-0 w-full bg-white shadow-md z-50">
       {/* Main Navbar Content */}
@@ -48,7 +44,7 @@ const Navbar = () => {
               Discover
             </a>
             {/* Trading Menu */}
-            <div className="relative group">
+            <div className="relative">
               <button
                 onClick={() => setIsTradingOpen(!isTradingOpen)}
                 className="flex items-center hover:text-blue-600"
@@ -123,25 +119,17 @@ const Navbar = () => {
 
             {/* Auth Buttons */}
             <button
-              onClick={() => {
-                setIsAuthModalOpen(true);
-                setActiveAuthTab("signin");
-              }}
+              onClick={() => setIsAuthModalOpen(true)}
               className="px-4 py-2 text-blue-600 hover:text-blue-700"
             >
               Sign In
             </button>
-            <Link to="/signUp">
-              <button
-                onClick={() => {
-                  setIsAuthModalOpen(true);
-                  setActiveAuthTab("signUp");
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Sign Up
-              </button>
-            </Link>
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Sign Up
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -149,22 +137,14 @@ const Navbar = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-2 rounded-lg hover:bg-gray-100"
           >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      <div
-        className={`md:hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen ? "max-h-screen" : "max-h-0 overflow-hidden"
-        }`}
-      >
-        <div className="bg-gray-50 border-t px-4 py-2 space-y-2">
+      {isMenuOpen && (
+        <div className="md:hidden bg-gray-50 border-t px-4 py-2 space-y-2">
           <a href="#" className="block py-2 px-4 hover:bg-blue-50 rounded-lg">
             Trading
           </a>
@@ -189,9 +169,7 @@ const Navbar = () => {
             {isTradingOpen && (
               <div className="mt-2 ml-4 space-y-4">
                 <div>
-                  <h3 className="font-bold text-gray-800 px-4 py-2">
-                    ACCOUNTS
-                  </h3>
+                  <h3 className="font-bold text-gray-800 px-4 py-2">ACCOUNTS</h3>
                   <div className="space-y-1">
                     {tradingSubmenu.ACCOUNTS.map((item) => (
                       <a
@@ -257,35 +235,26 @@ const Navbar = () => {
           {/* Mobile Auth Buttons */}
           <div className="pt-4 space-y-2">
             <button
-              onClick={() => {
-                setIsAuthModalOpen(true);
-                setActiveAuthTab("signin");
-                setIsMenuOpen(false);
-              }}
+              onClick={() => setIsAuthModalOpen(true)}
               className="w-full py-2 px-4 text-blue-600 hover:bg-blue-50 rounded-lg"
             >
               Sign In
             </button>
             <button
-              onClick={() => {
-                setIsAuthModalOpen(true);
-                setActiveAuthTab("signup");
-                setIsMenuOpen(false);
-              }}
+              onClick={() => setIsAuthModalOpen(true)}
               className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               Sign Up
             </button>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Auth Modal remains the same */}
+      {/* Auth Modal */}
       <LoginModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onLogin={(formData, isSignUp, e) => {
-          e.preventDefault();
+        onLogin={(formData, isSignUp) => {
           if (isSignUp) {
             console.log("Signing up with data:", formData);
           } else {
@@ -293,7 +262,6 @@ const Navbar = () => {
           }
         }}
       />
-      {/* ... (previous auth modal code) ... */}
     </nav>
   );
 };

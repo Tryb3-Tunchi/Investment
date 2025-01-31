@@ -116,7 +116,7 @@ const SignUpPage = () => {
               className="font-medium text-indigo-600 hover:text-indigo-500"
               disabled={loading}
             >
-              <Link></Link>
+              
               sign in to an existing account
             </button>
           </p>

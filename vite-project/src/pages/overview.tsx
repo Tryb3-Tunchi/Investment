@@ -3,21 +3,22 @@ import { motion } from "framer-motion";
 // import Link from 'next/link';
 import { Link } from "react-router-dom";
 // import { useEffect, useState } from "react";
+import Image from "../image/Image.png";
 
 const Overview = () => {
   // Company logos for the carousel
   const companies = [
-    "/logo1.png",
-    "/logo2.png",
-    "/logo3.png",
-    "/logo4.png",
-    "/logo5.png",
-    "/logo6.png",
+    Image,
+    Image,
+    Image,
+    Image,
+    Image,
+    Image,
     // Add more company logos as needed
   ];
 
   return (
-    <div className="relative min-h-screen -my-10 w-full overflow-hidden">
+    <div className="relative min-h-screen my-10 w-full overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0 z-0">
         <div className="h-full w-full bg-gradient-to-br from-blue-900 to-black">
@@ -97,12 +98,12 @@ const Overview = () => {
             {[...companies, ...companies].map((logo, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 w-20 h-20 bg-white rounded-full p-2"
+                className="flex-shrink-0 w-20 h-20 bg-white rounded-full p-[1px]"
               >
                 <img
                   src={logo}
                   alt={`Company logo ${index + 1}`}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover rounded-full border-none"
                 />
               </div>
             ))}

@@ -7,7 +7,6 @@ const MainHome = () => {
   return (
     <div>
       <div>
-        hellok
         <DashboardNav />
       </div>
       <div><AccountOverview /> </div>

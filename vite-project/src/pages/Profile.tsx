@@ -60,9 +60,9 @@ const ProfilePage = () => {
         </div>
         
         <nav className="p-2">
-          {sidebarItems.map((item,) => (
+          {sidebarItems.map((item) => (
              <Link
-             key={item}
+            //  key={item}
              to={item.path}
              className="flex items-center px-6 py-3 hover:bg-gray-100 transition-colors font-semibold"
            >

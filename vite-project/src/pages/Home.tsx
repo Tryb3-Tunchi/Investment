@@ -8,17 +8,18 @@ const Home = () => {
   return (
     <div>
       <div>
-        {" "}
-        <Navbar />{" "}
+        {/* <Navbar /> */}
       </div>
-      <div className="mt-20">
-        <Overview />{" "}
+      <div className="mt-10">
+        <Overview />
+
+      </div>
+      {/* <div><Navbar /> </div> */}
+      <div>
+        <Cards />
       </div>
       <div>
-        <Cards />{" "}
-      </div>
-      <div>
-        <ResultsSection />{" "}
+        <ResultsSection />
       </div>
       <div><Footer /> </div>
     </div>

@@ -17,25 +17,25 @@ const AccountOverview = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [accounts, setAccounts] = useState<Record<string, AccountData>>({
     real: {
-      type: "",
-      accountNumber: "",
+      type: "Real Account",
+      accountNumber: "123456789",
       balance: 110,
       profit: 100,
-      currency: "",
-      accountStyle: "",
+      currency: "USD",
+      accountStyle: "Standard",
     },
     demo: {
-      type: "",
-      accountNumber: "",
+      type: "Demo Account",
+      accountNumber: "987654321",
       balance: 1000,
       profit: 25000,
-      currency: "",
-      accountStyle: "",
+      currency: "USD",
+      accountStyle: "Practice",
     },
   });
   const navigate = useNavigate();
 
-  // Fetch data from the API
+  // Fetch data from the API (placeholder for actual API call)
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
@@ -48,6 +48,19 @@ const AccountOverview = () => {
 
     fetchAccounts();
   }, []);
+
+  // Reset demo account balance to maximum when switching to demo
+  useEffect(() => {
+    if (accountType === "demo") {
+      setAccounts((prev) => ({
+        ...prev,
+        demo: {
+          ...prev.demo,
+          balance: 1000, // Reset demo balance to maximum
+        },
+      }));
+    }
+  }, [accountType]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -65,6 +78,8 @@ const AccountOverview = () => {
           </button>
         </Link>
       </div>
+
+      {/* Account Overview Section */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">Accounts Overview</h1>
         <p className="text-gray-600">
@@ -97,13 +112,14 @@ const AccountOverview = () => {
         </button>
       </div>
 
+      {/* Account Details */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Main Account Box */}
         <div className="bg-white rounded-xl shadow-md p-6">
           <div className="flex justify-between items-start mb-4">
             <div>
               <h2 className="font-bold text-xl">
-                {accounts[accountType]?.type || "Loading..."}
+                {accounts[accountType]?.type}
               </h2>
               <p className="text-gray-600">
                 {accounts[accountType]?.accountStyle},{" "}
@@ -162,7 +178,7 @@ const AccountOverview = () => {
           <div className="flex space-x-4">
             <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold flex items-center justify-center">
               <Download className="h-4 w-4 mr-2" />
-              <Link to="/funding"> Deposit</Link>
+              <Link to="/funding">Deposit</Link>
             </button>
 
             <button className="flex-1 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg font-semibold flex items-center justify-center">

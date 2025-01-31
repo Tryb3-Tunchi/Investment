@@ -14,7 +14,7 @@ const DashboardNav = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isAccountReal, setAccountReal] = useState(true);
   const [isProfileOpen, setProfileOpen] = useState(false);
-  const [balance, setBalance] = useState("$10.00");
+  const [balance, setBalance] = useState("$100.00");
 
   const menuItems = [
     { title: "Home", path: "/home", icon: "home" },
