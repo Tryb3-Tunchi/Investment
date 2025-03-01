@@ -1,21 +1,42 @@
-import React, { useState, useEffect } from "react";
-import {
-  Menu,
-  X,
-  Wallet,
-  User,
-  DollarSign,
-} from "lucide-react";
+import React, { useState, useContext } from "react";
+import { Menu, X, Wallet, User, DollarSign } from "lucide-react";
 import { MdSwapHorizontalCircle } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "./themeToggle";
+import { BalanceContext } from "../components/balance/BalanceContext"; // Import the BalanceContext
 
-const DashboardNav = () => {
+const DashboardNav: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isAccountReal, setAccountReal] = useState(true);
   const [isProfileOpen, setProfileOpen] = useState(false);
-  const [balance, setBalance] = useState("$100.00");
 
+  // Use BalanceContext to access balances and related functions
+  const {
+    balances,
+    refreshBalances, // Ensure this is used
+    isLoading,
+    error,
+  } = useContext(BalanceContext);
+
+  // Get the displayed balance based on account type (real/demo)
+  const getDisplayedBalance = () => {
+    if (balances && balances.length > 0) {
+      const displayBalance = isAccountReal
+        ? balances.find((b) => b.currency === "USD") || balances[0]
+        : balances.find((b) => b.currency === "DEMO") || balances[0];
+
+      return `$${parseFloat(displayBalance.amount).toFixed(2)}`;
+    }
+    return "$0.00";
+  };
+
+  // Toggle between real and demo account and refresh balances
+  const toggleAccountType = async () => {
+    setAccountReal((prev) => !prev);
+    await refreshBalances(); // Refresh balances after toggling account type
+  };
+
+  // Menu items for the sidebar
   const menuItems = [
     { title: "Home", path: "/home", icon: "home" },
     { title: "My Accounts", path: "/account", icon: "user" },
@@ -25,24 +46,6 @@ const DashboardNav = () => {
     { title: "Market Intelligence", path: "/market", icon: "chart" },
     { title: "More", path: "", icon: "more" },
   ];
-
-  useEffect(() => {
-    // Simulated API call to fetch balance
-    const fetchBalance = async () => {
-      try {
-        const response = await fetch("/api/getBalance", { method: "GET" });
-        if (!response.ok) {
-          throw new Error("Failed to fetch balance");
-        }
-        const data = await response.json();
-        setBalance(isAccountReal ? data.realBalance : data.demoBalance);
-      } catch (error) {
-        console.error("Error fetching balance:", error);
-      }
-    };
-
-    fetchBalance();
-  }, [isAccountReal]);
 
   return (
     <div className="relative">
@@ -59,16 +62,18 @@ const DashboardNav = () => {
 
           <img src="/logo.png" alt="Logo" className="h-10 w-10" />
 
-          <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-2 ">
+          <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-2">
             <span className="text-xl text-gray-500 hidden lg:block">
               Balance:
             </span>
-            <span className="font-semibold text-bas text-xl">{balance}</span>
+            <span className="font-semibold text-bas text-xl">
+              {isLoading ? "Loading..." : error ? error : getDisplayedBalance()}
+            </span>
             <button
-              onClick={() => setAccountReal(!isAccountReal)}
+              onClick={toggleAccountType}
               className="flex items-center space-x-1 text-sm text-green-300 hover:text-blue-700"
             >
-              <span className="font-semibold text-xl hidden md:block  pl-4">
+              <span className="font-semibold text-lg hidden md:block pl-2">
                 {isAccountReal ? "Real" : "Demo"}
               </span>
               <MdSwapHorizontalCircle className="h-6 w-8" />
@@ -79,13 +84,19 @@ const DashboardNav = () => {
         {/* Right Section - Hidden on mobile */}
         <div className="hidden md:flex items-center space-x-4">
           <Link to="/funding">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center font-semibold">
+            <button
+              className="px-2 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center font-semibold"
+              onClick={async () => {
+                // Simulate a deposit action
+                await refreshBalances(); // Refresh balances after a deposit
+              }}
+            >
               <DollarSign className="h-4 w-4 mr-2" />
               Add Balance
             </button>
           </Link>
 
-          <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 flex items-center font-semibold">
+          <button className="px-2 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 flex items-center font-semibold">
             <Wallet className="h-4 w-4 mr-2" />
             Connect Wallet
           </button>
@@ -102,30 +113,31 @@ const DashboardNav = () => {
 
             {isProfileOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
-                <a
-                  href="/profile"
+                <Link
+                  to="/profile"
                   className="block px-4 py-2 hover:bg-gray-100 font-semibold"
                 >
                   Profile
-                </a>
-                <a
-                  href="/settings"
+                </Link>
+                <Link
+                  to="/settings"
                   className="block px-4 py-2 hover:bg-gray-100 font-semibold"
                 >
                   Settings
-                </a>
+                </Link>
                 <hr className="my-2" />
-                <a
-                  href="signin"
+                <Link
+                  to="/signin"
                   className="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold"
                 >
                   Sign Out
-                </a>
+                </Link>
               </div>
             )}
           </div>
         </div>
 
+        {/* Mobile Profile Dropdown */}
         <div className="relative md:hidden">
           <button
             onClick={() => setProfileOpen(!isProfileOpen)}
@@ -136,25 +148,25 @@ const DashboardNav = () => {
 
           {isProfileOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
-              <a
-                href="/profile"
+              <Link
+                to="/profile"
                 className="block px-4 py-2 hover:bg-gray-100 font-semibold"
               >
                 Profile
-              </a>
-              <a
-                href="/settings"
+              </Link>
+              <Link
+                to="/settings"
                 className="block px-4 py-2 hover:bg-gray-100 font-semibold"
               >
                 Settings
-              </a>
+              </Link>
               <hr className="my-2" />
-              <a
-                href="/signin"
+              <Link
+                to="/signin"
                 className="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold"
               >
                 Sign Out
-              </a>
+              </Link>
             </div>
           )}
         </div>
@@ -202,7 +214,13 @@ const DashboardNav = () => {
             {/* Mobile-only buttons */}
             <div className="md:hidden px-6 pt-4 space-y-3">
               <Link to="/funding">
-                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center font-semibold">
+                <button
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center font-semibold"
+                  onClick={async () => {
+                    // Simulate a deposit action
+                    await refreshBalances(); // Refresh balances after a deposit
+                  }}
+                >
                   <DollarSign className="h-4 w-4 mr-2" />
                   Add Balance
                 </button>

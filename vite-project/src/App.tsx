@@ -16,6 +16,8 @@ import MarketDashboard from "./pages/Market";
 import ProfilePage from "./pages/Profile";
 import AdminDashboard from "./pages/Admin/AdminPages";
 import Footer from "./components/Footer";
+import LoginModal from "./components/login/AuthLogin";
+import Withdrawal from "./pages/Withdrawal";
 
 function App() {
   return (
@@ -23,7 +25,7 @@ function App() {
       <div className="bg- text-w">
         <Navbar /> 
         {/* <Footer /> */}
-        <Router>
+        {/* <Router> */}
           <Routes>
             
             <Route index element={<Home />} />
@@ -33,13 +35,15 @@ function App() {
             <Route path="verify" element={<VerifyDetails />} />
             <Route path="account" element={<MyAccount />} />
             <Route path="funding" element={<FundingPage />} />
+            <Route path="withdraw" element={<Withdrawal />} />
             <Route path="trade" element={<CopyTradingSection />} />
             <Route path="Refer-friend" element={<ReferFriendPage />} />
             <Route path="market" element={<MarketDashboard />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="admin" element={<AdminDashboard />} />
+            <Route path="login" element={<LoginModal isOpen={true} onClose={() => {}} />} />
           </Routes>
-        </Router>
+        {/* </Router> */}
       </div>
     </>
   );

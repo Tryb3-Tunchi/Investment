@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { ChevronDown, X, Globe, Menu } from "lucide-react";
-import { Link } from "react-router-dom";
-import LoginModal from "./AuthLogin";
+// import { Link } from "react-router-dom";
+import LoginModal from "./login/AuthLogin";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -254,13 +254,13 @@ const Navbar = () => {
       <LoginModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onLogin={(formData, isSignUp) => {
-          if (isSignUp) {
-            console.log("Signing up with data:", formData);
-          } else {
-            console.log("Logging in with data:", formData);
-          }
-        }}
+        // onLogin={(formData: any, isSignUp: any) => {
+        //   if (isSignUp) {
+        //     console.log("Signing up with data:", formData);
+        //   } else {
+        //     console.log("Logging in with data:", formData);
+        //   }
+        // }}
       />
     </nav>
   );

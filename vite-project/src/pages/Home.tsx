@@ -1,5 +1,5 @@
 import Footer from "../components/Footer";
-import Navbar from "../components/Header";
+// import Navbar from "../components/Header";
 import ResultsSection from "./Article";
 import Cards from "./Cards";
 import Overview from "./overview";

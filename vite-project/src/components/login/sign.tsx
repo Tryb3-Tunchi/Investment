@@ -1,174 +1,407 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import VerificationModal from "../../components/login/verifyModal";
+import apiService from "../Api/apiService";
+import { useAuth } from "../../auth/AuthContext";
 
 const SignInPage = () => {
-  const [formData, setFormData] = useState({
-    username: "",
+  const [loginData, setLoginData] = useState({
+    email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [isVerificationModalOpen, setVerificationModalOpen] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [forgotPasswordData, setForgotPasswordData] = useState({
+    email: "",
+    otp: "",
+    newPassword: "",
+  });
   const navigate = useNavigate();
-
-  const signIn = (e) => {
-    e.preventDefault();
-    setFormData({ username: "", password: "" });
-  };
+  const { sign } = useAuth();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (isForgotPassword) {
+      setForgotPasswordData((prev) => ({ ...prev, [name]: value }));
+      if (name === "newPassword") {
+        setError("");
+      }
+    } else {
+      setLoginData((prev) => ({ ...prev, [name]: value }));
+      if (name === "password") {
+        setError("");
+      }
+    }
   };
 
-  const handleSubmit = (e) => {
+  const validatePassword = (password) => {
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Implement actual login logic
-    console.log("Signing in:", formData);
-    // Example: After successful login
-    // navigate('/dashboard');
+    if (!validatePassword(loginData.password)) {
+      return;
+    }
+    try {
+      const response = await apiService.login(loginData);
+
+      if (response.access_token) {
+        // The apiService already stores tokens in localStorage
+        // Just verify that both tokens were received and stored
+        if (!response.refresh_token) {
+          console.error("Refresh token not received");
+          setError("Authentication error: missing refresh token");
+          return;
+        }
+        
+        // Double-check that tokens are in localStorage
+        const storedToken = localStorage.getItem("token");
+        const storedRefreshToken = localStorage.getItem("refreshToken");
+        
+        if (!storedToken || !storedRefreshToken) {
+          console.error("Tokens not properly stored in localStorage");
+          // Manually store them again to be safe
+          localStorage.setItem("token", response.access_token);
+          localStorage.setItem("refreshToken", response.refresh_token);
+        }
+        
+        setVerificationModalOpen(true);
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", loginData.email);
+        }
+        sign();
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("Invalid Login Info or check network");
+    }
   };
 
-  const handleGmailSignIn = () => {
-    // TODO: Implement Google Sign-In logic
-    console.log("Signing in with Gmail");
+  const handleVerifyCode = async (otp) => {
+    try {
+      const response = await apiService.verifyOtp(loginData.email, otp);
+      if (response.message) {
+        // Ensure we have valid tokens after OTP verification
+        const storedToken = localStorage.getItem("token");
+        const storedRefreshToken = localStorage.getItem("refreshToken");
+        
+        if (!storedToken || !storedRefreshToken) {
+          console.error("Tokens missing after OTP verification");
+          setError("Authentication error after verification");
+          return;
+        }
+        
+        navigate("/home");
+      } else {
+        alert("OTP verification failed.");
+      }
+    } catch (error) {
+      console.error("Error occurred during OTP verification", error);
+      setError("OTP verification failed");
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      await apiService.resendOtp(loginData.email);
+      alert("OTP has been resent.");
+    } catch (error) {
+      console.error("Error occurred while resending OTP", error);
+      setError("Error resending OTP");
+    }
+  };
+
+  const handleForgotPasswordRequest = async () => {
+    if (!forgotPasswordData.email) {
+      setError("Please enter your email address");
+      return;
+    }
+    try {
+      const response = await apiService.requestPasswordChange(
+        forgotPasswordData.email
+      );
+      if (response.message) {
+        alert("OTP has been sent to your email.");
+      } else {
+        setError("Failed to send OTP for password reset.");
+      }
+    } catch (error) {
+      console.error("Error occurred during forgot password request", error);
+      setError("Error occurred while requesting password reset");
+    }
+  };
+
+  const handleVerifyForgotPasswordOtp = async () => {
+    if (!forgotPasswordData.otp) {
+      setError("Please enter the OTP");
+      return;
+    }
+    try {
+      const response = await apiService.verifyPasswordChange(
+        forgotPasswordData.email,
+        forgotPasswordData.otp
+      );
+      if (response.message) {
+        alert("OTP verified. You can now set a new password.");
+      } else {
+        setError("OTP verification for password reset failed.");
+      }
+    } catch (error) {
+      console.error(
+        "Error occurred during forgot password OTP verification",
+        error
+      );
+      setError("Error verifying OTP for password reset");
+    }
+  };
+
+  const handleSetNewPassword = async () => {
+    if (!validatePassword(forgotPasswordData.newPassword)) {
+      return;
+    }
+    try {
+      const response = await apiService.setNewPassword(
+        forgotPasswordData.email,
+        forgotPasswordData.newPassword
+      );
+      if (response.message) {
+        alert(
+          "Password reset successful. You can now log in with your new password."
+        );
+        setIsForgotPassword(false);
+      } else {
+        setError("Failed to reset password.");
+      }
+    } catch (error) {
+      console.error("Error occurred while setting new password", error);
+      setError("Error resetting password");
+    }
   };
 
   return (
-    <div className="min-h-screen flex w-full  items-center justify-center bg-gray-50 px-4 py-8 ">
-      <div className="max-w-md w-full  space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{" "}
-            <button
-              onClick={() => navigate("/signUp")}
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              <Link to="/signUp">create a new account</Link>
-            </button>
-          </p>
-        </div>
-
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="username" className="sr-only">
-                Username
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                value={formData.username}
-                onChange={handleInputChange}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={formData.password}
-                onChange={handleInputChange}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Forgot your password?
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <button
-              onClick={signIn}
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Sign in
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <button
-              onClick={handleGmailSignIn}
-              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-            >
-              <span className="sr-only">Sign in with Gmail</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 48 48"
-              >
-                <path
-                  fill="#EA4335"
-                  d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.92 13.22l7.45 5.77C12.46 13.34 17.48 9.5 24 9.5z"
-                />
-                <path
-                  fill="#4285F4"
-                  d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.28-3.14.76-4.59l-7.45-5.77c-1.56 3.1-2.46 6.58-2.46 10.36 0 3.78.9 7.26 2.46 10.36l7.45-5.77z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.52 0-12.04-4.37-14.07-10.2l-7.68 5.96C6.51 42.62 14.62 48 24 48z"
-                />
-              </svg>
-              <span className="ml-2">Sign in with Gmail</span>
-            </button>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tl from-blue-50 via-indigo-50 to-purple-50 px-4 py-12 relative overflow-hidden">
+      {/* Mobile background effect */}
+      <div className=" inset-0 md:hidden">
+        <div className=" inset-0 bg-blue-500 opacity-5">
+          <div className="absolute w-96 h-96 -top-48 -left-48 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute w-96 h-96 -bottom-48 -right-48 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
         </div>
       </div>
+
+      <div className="max-w-4xl w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+        <div className="md:w-1/2 p-8">
+          <div className="max-w-md mx-auto space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-gray-900">
+                {isForgotPassword ? "Reset your password" : "Welcome back"}
+              </h2>
+              <p className="mt-2 text-gray-600">
+                {isForgotPassword ? (
+                  <button
+                    onClick={() => {
+                      setIsForgotPassword(false);
+                      setError("");
+                    }}
+                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                  >
+                    Back to login
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate("/signUp")}
+                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                    type="button"
+                  >
+                    Create a new account
+                  </button>
+                )}
+              </p>
+            </div>
+
+            {isForgotPassword ? (
+              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <div className="space-y-4">
+                  <div className="transform transition-all duration-300 hover:-translate-y-1">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      value={forgotPasswordData.email}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 outline-none"
+                      placeholder="Email"
+                    />
+                  </div>
+
+                  {forgotPasswordData.otp && (
+                    <div className="transform transition-all duration-300 hover:-translate-y-1">
+                      <input
+                        id="otp"
+                        name="otp"
+                        type="text"
+                        required
+                        value={forgotPasswordData.otp}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 outline-none"
+                        placeholder="OTP"
+                      />
+                    </div>
+                  )}
+
+                  {forgotPasswordData.otp && (
+                    <div className="transform transition-all duration-300 hover:-translate-y-1">
+                      <input
+                        id="newPassword"
+                        name="newPassword"
+                        type="password"
+                        required
+                        value={forgotPasswordData.newPassword}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 outline-none"
+                        placeholder="New Password (minimum 8 characters)"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {error && (
+                  <p className="text-red-500 text-sm mt-2 animate-shake">
+                    {error}
+                  </p>
+                )}
+
+                {!forgotPasswordData.otp ? (
+                  <button
+                    onClick={handleForgotPasswordRequest}
+                    className="w-full py-3 px-4 border border-transparent rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0"
+                  >
+                    Request OTP
+                  </button>
+                ) : (
+                  <div className="space-y-4">
+                    <button
+                      onClick={handleVerifyForgotPasswordOtp}
+                      className="w-full py-3 px-4 border border-transparent rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0"
+                    >
+                      Verify OTP
+                    </button>
+                    <button
+                      onClick={handleSetNewPassword}
+                      className="w-full py-3 px-4 border border-transparent rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0"
+                    >
+                      Set New Password
+                    </button>
+                  </div>
+                )}
+              </form>
+            ) : (
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <div className="space-y-4">
+                  <div className="transform transition-all duration-300 hover:-translate-y-1">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      value={loginData.email}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 outline-none"
+                      placeholder="Email"
+                    />
+                  </div>
+
+                  <div className="transform transition-all duration-300 hover:-translate-y-1">
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      required
+                      value={loginData.password}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 outline-none"
+                      placeholder="Password (minimum 8 characters)"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <input
+                      id="remember-me"
+                      name="remember-me"
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                    />
+                    <label
+                      htmlFor="remember-me"
+                      className="ml-2 block text-sm text-gray-700 cursor-pointer"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsForgotPassword(true);
+                      setError("");
+                    }}
+                    className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+
+                {error && (
+                  <p className="text-red-500 text-sm mt-2 animate-shake">
+                    {error}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full py-3 px-4 border border-transparent rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0"
+                >
+                  Sign in
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+
+        <div className="md:w-1/2 bg-blue-600 p-8 hidden md:flex flex-col justify-center items-center text-white">
+          <img
+            src="clothASL2.png"
+            alt="Login illustration"
+            className="w-full max-w-sm mb-8 rounded-lg shadow-lg"
+          />
+          <h2 className="text-3xl font-bold mb-4">Hello, Friend!</h2>
+          <p className="text-blue-100 text-center">
+            Enter your personal details and start your journey with us
+          </p>
+        </div>
+      </div>
+
+      <VerificationModal
+        isOpen={isVerificationModalOpen}
+        onClose={() => setVerificationModalOpen(false)}
+        onVerify={handleVerifyCode}
+        onResend={handleResend}
+        verificationCode={verificationCode}
+        setVerificationCode={setVerificationCode}
+      />
     </div>
   );
 };
