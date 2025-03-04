@@ -1,19 +1,23 @@
 import React, { useState, useContext } from "react";
 import { Menu, X, Wallet, User, DollarSign } from "lucide-react";
 import { MdSwapHorizontalCircle } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ThemeToggle } from "./themeToggle";
-import { BalanceContext } from "../components/balance/BalanceContext"; // Import the BalanceContext
+import { BalanceContext } from "../components/balance/BalanceContext";
+import apiService from "../components/Api/apiService";
 
 const DashboardNav: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isAccountReal, setAccountReal] = useState(true);
   const [isProfileOpen, setProfileOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Use BalanceContext to access balances and related functions
   const {
     balances,
-    refreshBalances, // Ensure this is used
+    refreshBalances,
     isLoading,
     error,
   } = useContext(BalanceContext);
@@ -33,7 +37,26 @@ const DashboardNav: React.FC = () => {
   // Toggle between real and demo account and refresh balances
   const toggleAccountType = async () => {
     setAccountReal((prev) => !prev);
-    await refreshBalances(); // Refresh balances after toggling account type
+    await refreshBalances();
+  };
+
+  // Logout handler
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    setLogoutError(null);
+
+    try {
+      await apiService.logout();
+      // Navigate to signin page
+      navigate('/signin');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      setLogoutError('Failed to log out. You have been logged out locally.');
+      // Force navigation even if logout request fails
+      navigate('/signin');
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   // Menu items for the sidebar
@@ -126,12 +149,13 @@ const DashboardNav: React.FC = () => {
                   Settings
                 </Link>
                 <hr className="my-2" />
-                <Link
-                  to="/signin"
-                  className="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold"
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 font-semibold"
                 >
-                  Sign Out
-                </Link>
+                  {isLoggingOut ? 'Logging out...' : 'Sign Out'}
+                </button>
               </div>
             )}
           </div>
@@ -161,16 +185,30 @@ const DashboardNav: React.FC = () => {
                 Settings
               </Link>
               <hr className="my-2" />
-              <Link
-                to="/signin"
-                className="block px-4 py-2 text-red-600 hover:bg-red-50 font-semibold"
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 font-semibold"
               >
-                Sign Out
-              </Link>
+                {isLoggingOut ? 'Logging out...' : 'Sign Out'}
+              </button>
             </div>
           )}
         </div>
       </nav>
+
+      {/* Logout Error Notification */}
+      {logoutError && (
+        <div className="fixed top-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded z-[100] flex items-center justify-between">
+          <span>{logoutError}</span>
+          <button 
+            onClick={() => setLogoutError(null)} 
+            className="ml-4 text-yellow-700 font-bold"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Sidebar Menu */}
       <div
@@ -217,8 +255,7 @@ const DashboardNav: React.FC = () => {
                 <button
                   className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center font-semibold"
                   onClick={async () => {
-                    // Simulate a deposit action
-                    await refreshBalances(); // Refresh balances after a deposit
+                    await refreshBalances();
                   }}
                 >
                   <DollarSign className="h-4 w-4 mr-2" />
@@ -229,6 +266,14 @@ const DashboardNav: React.FC = () => {
               <button className="w-full px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 flex items-center justify-center font-semibold">
                 <Wallet className="h-4 w-4 mr-2" />
                 Connect Wallet
+              </button>
+
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center justify-center font-semibold"
+              >
+                {isLoggingOut ? 'Logging out...' : 'Sign Out'}
               </button>
             </div>
           </div>
