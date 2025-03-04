@@ -202,10 +202,7 @@ const WithdrawalPage: React.FC = () => {
       };
 
       // Call API service with the proper parameters
-      const response = await apiService.fetch<any>("/api/withdrawals/", {
-        method: "POST",
-        body: JSON.stringify(withdrawalData),
-      });
+      const response = await apiService.createWithdrawal(withdrawalData);
 
       // Generate a random ID if the API doesn't return one
       const withdrawalId = response?.id || Math.random().toString(36).substring(7);

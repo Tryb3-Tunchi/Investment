@@ -63,6 +63,15 @@ interface WithdrawalsResponse {
     results: Withdrawal[];
 }
 
+interface WithdrawalRequestData {
+  amount: string;
+  method: string | undefined;
+  status: string;
+  destination_address?: string;
+  account_number?: string;
+  routing_number?: string;
+}
+
 interface ApiError {
     message: string;
     [key: string]: any;
@@ -422,10 +431,10 @@ class ApiService {
         return this.fetch<Withdrawal>(`/api/withdrawals/${id}/`);
     }
 
-    public async createWithdrawal(amount: number): Promise<Withdrawal> {
-        return this.fetch<Withdrawal>("/api/withdrawals/", {
+    public async createWithdrawal(data: WithdrawalRequestData): Promise<any> {
+        return this.fetch("/api/withdrawals/", {
             method: "POST",
-            body: JSON.stringify({ amount: amount.toString() }),
+            body: JSON.stringify(data),
         });
     }
 
